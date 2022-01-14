@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <script src="/static/js/jquery-3.3.1.min.js"></script>
+        <script src="/static/js/plotly-latest.min.js"></script>
+    </head>
+    <body>
+        {% if packages %}
+        <select id="sel-package">
+            {% for p in package %}
+            <option {% if p.name == package %}selected="selected"{% endif %}>{{ p.name }}</option>
+            {% endfor %}
+        </select>
+        {% endif %}
+        {% if users %}
+        <select id="sel-user">
+            {% for u in users %}
+            <option {% if u.name == user %}selected="selected"{% endif %}>{{ u.name }}</option>
+            {% endfor %}
+        </select>
+        {% endif %}
+        {% if methods %}
+        <select id="sel-method">
+            {% for m in methods %}
+            <option {% if m == method %}selected="selected"{% endif %}>{{ m }}</option>
+            {% endfor %}
+        </select>
+        {% endif %}
+        {% if channels %}
+        <select id="sel-channel">
+            {% for m in channels %}
+            <option {% if m == channel %}selected="selected"{% endif %}>{{ m }}</option>
+            {% endfor %}
+        </select>
+        {% endif %}
+        <select id="sel-scope">
+            <option {% if scope == "all" %}selected="selected"{% endif %}>all</option>
+            <option {% if scope == "3-years" %}selected="selected"{% endif %} value="3-years">3 years</option>
+            <option {% if scope == "year" %}selected="selected"{% endif %}>year</option>
+            <option {% if scope == "6-months" %}selected="selected"{% endif %} value="6-months">6 months</option>
+            <option {% if scope == "3-months" %}selected="selected"{% endif %} value="3-months">3 months</option>
+            <option {% if scope == "month" %}selected="selected"{% endif %}>month</option>
+            <option {% if scope == "week" %}selected="selected"{% endif %}>week</option>
+            <option {% if scope == "day" %}selected="selected"{% endif %}>day</option>
+            <option {% if scope == "hour" %}selected="selected"{% endif %}>hour</option>
+        </select>
+        <select id="sel-counts">
+            <option {% if counts == "counts" %}selected="selected"{% endif %}>counts</option>
+            <option {% if counts == "times" %}selected="selected"{% endif %}>times</option>
+            <option {% if counts == "averages" %}selected="selected"{% endif %}>averages</option>
+            <option {% if counts == "medians" %}selected="selected"{% endif %}>medians</option>
+            <option {% if counts == "waits" %}selected="selected"{% endif %}>waits</option>
+        </select>
+
+        <div id="chart" class="chart-container" style="height:100vh; width:100vw"></div>
+        {% block body %}{% endblock %}
+    </body>
+</html>

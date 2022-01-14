@@ -1,0 +1,60 @@
+{% extends "base_graph.html" %}
+{% block body %}
+        <script>
+            function redir(m, s, c) {
+                var url = '/charts/channels/'
+                if (s)
+                    url = url + s;
+                else
+                    url = url + "{{ scope }}";
+                url = url + '/';
+                if (c)
+                    url = url + c;
+                else
+                    url = url + "{{ counts }}";
+                window.location.href = url;
+            }
+
+            $(document).ready(function() {
+                $('#sel-scope').change(function() { redir(0, $(this).val(), 0); });
+                $('#sel-counts').change(function() { redir(0, 0, $(this).val()); });
+
+                chart_el = document.getElementById("chart");
+                $.ajax({'url': '/data/channels/{{ scope }}/{{ counts }}'}).done(function(data) {
+                    var datasets = Array();
+                    Object.keys(data.data).forEach((trace_key) => {
+                        var trace = data.data[trace_key];
+                        var x = Array();
+                        var y = Array();
+                        trace.forEach((obj) => {
+                            x.push(obj.x);
+                            y.push(obj.y);
+                        });
+                        var trace_obj = {
+                            x: x,
+                            y: y,
+                            name: trace_key,
+                            type: 'bar'
+                        };
+                        datasets.push(trace_obj);
+                    });
+
+                    Plotly.newPlot(chart_el,
+                        datasets,
+                        {
+                            margin: { t: 0 },
+                            xaxis: {type: 'date', title: data.xtitle},
+                            yaxis: {title: data.ytitle},
+                            title: data.title,
+                            barmode: 'stack',
+                        },
+                        {
+                            responsive: true
+                        }
+                    );
+                    console.log("end");
+                });
+            });
+        </script>
+    </body>
+{% endblock %}

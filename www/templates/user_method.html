@@ -1,0 +1,59 @@
+{% extends "base_graph.html" %}
+{% block body %}
+    <script>
+            function redir(u, m, s, c) {
+                var url = '/charts/users/'
+                if (u)
+                    url = url + u;
+                else
+                    url = url + "{{ user }}";
+                url = url + '/';
+                if (m)
+                    url = url + m;
+                else
+                    url = url + "{{ method }}";
+                url = url + '/';
+                if (s)
+                    url = url + s;
+                else
+                    url = url + "{{ scope }}";
+                url = url + '/';
+                if (c)
+                    url = url + c;
+                else
+                    url = url + "{{ counts }}";
+                window.location.href = url;
+            }
+
+            $(document).ready(function() {
+                $('#sel-user').change(function() { redir($(this).val(), 0, 0, 0); });
+                $('#sel-method').change(function() {redir(0, $(this).val(), 0, 0); });
+                $('#sel-scope').change(function() { redir(0, 0, $(this).val(), 0); });
+                $('#sel-counts').change(function() { redir(0, 0, 0, $(this).val()); });
+
+                chart_el = document.getElementById("chart");
+
+                $.ajax({'url': '/data/users/{{ user }}/{{ method }}/{{ scope }}/{{ counts }}'}).done(function(data) {
+                    // [{x: 1, y: 2}]
+                    var x = Array();
+                    var y = Array();
+                    data.data.forEach((obj) => {
+                        x.push(obj.x);
+                        y.push(obj.y);
+                    });
+                    Plotly.newPlot(chart_el,
+                        [ { x: x, y: y, type: 'bar' } ],
+                        {
+                            margin: { t: 0 },
+                            xaxis: {type: 'date', title: 'Date'},
+                            yaxis: {title: data.ytitle},
+                        },
+                        {
+                            responsive: true
+                        }
+                    );
+
+                });
+            });
+    </script>
+{% endblock %}
